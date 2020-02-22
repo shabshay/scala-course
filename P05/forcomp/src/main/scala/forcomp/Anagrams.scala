@@ -189,175 +189,54 @@ object Anagrams extends AnagramsInterface {
     *
     * Note: There is only one anagram of an empty sentence.
     */
-  def sentenceAnagrams2(sentence: Sentence): List[Sentence] = {
-
-    def sentenceAnagrams(occurrences: Occurrences): List[Sentence] = {
-      if (occurrences.isEmpty) {
-        List(List.empty)
-      }
-      else {
-        val occurrencesCombinations: List[Occurrences] = combinations(occurrences)
-
-        val allSentences: List[Sentence] = occurrencesCombinations.flatMap(
-          (occ: Occurrences) => {
-
-            val occAnagrams: Option[List[Word]] = dictionaryByOccurrences.get(occ)
-
-            if (occAnagrams.isDefined) {
-
-              val subOccurrences: Occurrences = subtract(occurrences, occ)
-
-              if (subOccurrences.nonEmpty) {
-                val subSentences: List[Sentence] = sentenceAnagrams(subOccurrences)
-
-                if (subSentences.flatten.nonEmpty) {
-
-                  val sentences: List[Sentence] = subSentences.map(
-                    sentence =>
-                      occAnagrams.get.flatMap((word: Word) => {
-                        if (sentence.nonEmpty) {
-                          val allSentence = word :: sentence
-                          allSentence
-                        }
-                        else {
-                          List.empty
-                        }
-                      }))
-
-                  sentences
-                }
-                else {
-                  val angaramsSentences: List[Sentence] = occAnagrams.get.map(word => List(word))
-                  angaramsSentences
-                }
-              }
-              else {
-                val angaramsSentences: List[Sentence] = occAnagrams.get.map(word => List(word))
-                angaramsSentences
-              }
-            } else {
-              List(List.empty)
-            }
-          })
-
-        for (s <- allSentences.distinct) {
-          if (sentenceOccurrences(s) != occurrences) {
-            val x = true
-          }
-        }
-        allSentences.distinct
-
-        val filteredSentences = allSentences.filter(s => sentenceOccurrences(s) == occurrences).distinct
-        if (filteredSentences.nonEmpty)
-          filteredSentences
-        else
-          List(List.empty)
-      }
-    }
-
-    val occurrences: Occurrences = sentenceOccurrences(sentence)
-    sentenceAnagrams(occurrences)
-  }
-
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
 
     def sentenceAnagrams(occurrences: Occurrences): List[Sentence] = {
 
       if (occurrences.isEmpty) {
-        return List(List.empty)
-      }
+        List(List.empty)
+      } else {
 
-      //
-      if (occurrences.size == 2){
-        val b = true
-      }
-      //
+        val occurrencesCombinations: List[Occurrences] = combinations(occurrences)
 
-      var ret: List[Sentence] = List()
+        val sentencesList: List[Sentence] = occurrencesCombinations.flatMap(comb => {
+          val anagrams: List[Word] = dictionaryByOccurrences.getOrElse(comb, List.empty)
 
-      val occurrencesCombinations: List[Occurrences] = combinations(occurrences)
+          if (anagrams.flatten.nonEmpty) {
 
-      for (comb <- occurrencesCombinations) {
-        val anagrams: List[Word] = dictionaryByOccurrences.getOrElse(comb, List.empty)
+            val subOccurrences: Occurrences = subtract(occurrences, comb)
 
-        if (anagrams.flatten.nonEmpty) {
+            if (subOccurrences.isEmpty) {
+              val sentence = anagrams.map(word => List(word))
+              sentence
+            } else {
+              val subOccSentences: List[Sentence] = sentenceAnagrams(subOccurrences)
 
-          val subOccurrences: Occurrences = subtract(occurrences, comb)
-
-          if (subOccurrences.isEmpty){
-            ret = anagrams.map(word => List(word)) ::: ret
-          }
-
-          val subOccSentences: List[Sentence] = sentenceAnagrams(subOccurrences)
-
-          if (subOccSentences.flatten.nonEmpty) {
-            for (anagram <- anagrams) {
-              for (subSentence <- subOccSentences) {
-                val sentence: Sentence = anagram :: subSentence
-                ret = sentence :: ret
+              if (subOccSentences.flatten.nonEmpty) {
+                val occSentences: List[Sentence] = anagrams.flatMap(anagram =>
+                  subOccSentences.map(subSentence => {
+                    val sentence: Sentence = anagram :: subSentence
+                    sentence
+                  }))
+                occSentences
+              }
+              else {
+                Nil
               }
             }
           }
-        }
-      }
+          else {
+            Nil
+          }
+        })
 
-      ret
+        sentencesList
+      }
     }
 
     val occurrences = sentenceOccurrences(sentence)
     sentenceAnagrams(occurrences)
   }
-
-  //  def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
-  //
-  //    def sentenceAnagrams(occurrences: Occurrences): List[Sentence] = {
-  //      if (occurrences.isEmpty) {
-  //        List(List.empty)
-  //      }
-  //      else {
-  //        val occurrencesCombinations: List[Occurrences] = combinations(occurrences)
-  //
-  //        val sentences: List[Sentence] = occurrencesCombinations.flatMap(occ => {
-  //          val occurenceSentences = buildOccurrenceSentences(occ, occurrences)
-  //          occurenceSentences
-  //        })
-  //
-  //        sentences.sortBy(s => s)
-  //      }
-  //    }
-  //
-  //    def buildOccurrenceSentences(subOcc: Occurrences, occurrences: Occurrences): List[Sentence] = {
-  //      if (subOcc.isEmpty) {
-  //        List(List.empty)
-  //      }
-  //      else {
-  //        val occAnagrams: Option[List[Word]] = dictionaryByOccurrences.get(subOcc)
-  //
-  //        if (occAnagrams.isDefined) {
-  //          val subOccs: Occurrences = subtract(occurrences, subOcc)
-  //          val subSentenceAnagrams: List[Sentence] = sentenceAnagrams(subOccs)
-  //          if (subSentenceAnagrams.isEmpty)
-  //            List(List.empty)
-  //          else {
-  //            val wordToSentences: List[List[Sentence]] = occAnagrams.get.filter(word => word.nonEmpty).map(
-  //              word =>
-  //                subSentenceAnagrams.map(sentence =>
-  //                  word :: sentence
-  //                )
-  //            )
-  //            wordToSentences.flatten
-  //          }
-  //        }
-  //        else {
-  //          List(List.empty)
-  //        }
-  //      }
-  //    }
-  //
-  //    val occurrences = sentenceOccurrences(sentence)
-  //    sentenceAnagrams(occurrences)
-  //  }
-
 }
 
 object Dictionary {

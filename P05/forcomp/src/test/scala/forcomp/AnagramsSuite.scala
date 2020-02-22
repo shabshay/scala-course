@@ -129,14 +129,7 @@ class AnagramsSuite {
   @Test def `sentence anagrams: emacs`: Unit = {
     val sentence = List("emacs")
     val anas = List(
-    )
-    val res = sentenceAnagrams(sentence).toSet
-    assertEquals(anas.toSet, res)
-  }
-
-  @Test def `sentence anagrams: ely em`: Unit = {
-    val sentence = List("Ely", "em")
-    val anas = List(
+      List("emacs"), List("maces")
     )
     val res = sentenceAnagrams(sentence).toSet
     assertEquals(anas.toSet, res)
@@ -145,6 +138,20 @@ class AnagramsSuite {
   @Test def `sentence anagrams: my as en`: Unit = {
     val sentence = List("my", "as", "en")
     val anas = List(
+      List("my", "sane"),
+      List("as", "my", "en"),
+      List("Sean", "my"),
+      List("my", "as", "en"),
+      List("my", "en", "as"),
+      List("yes", "man"),
+      List("my", "Sean"),
+      List("en", "my", "as"),
+      List("en", "as", "my"),
+      List("men", "say"),
+      List("as", "en", "my"),
+      List("say", "men"),
+      List("man", "yes"),
+      List("sane", "my")
     )
     val res = sentenceAnagrams(sentence).toSet
     assertEquals(anas.toSet, res)
@@ -153,10 +160,11 @@ class AnagramsSuite {
   @Test def `sentence anagrams: as en`: Unit = {
     val sentence = List("as", "en")
     val anas = List(
+      List("sane"), List("Sean"), List("as", "en"), List("en", "as")
     )
     val res = sentenceAnagrams(sentence).toSet
     assertEquals(anas.toSet, res)
   }
 
-  //@Rule def individualTestTimeout = new org.junit.rules.Timeout(10 * 1000)
+  @Rule def individualTestTimeout = new org.junit.rules.Timeout(10 * 1000)
 }
