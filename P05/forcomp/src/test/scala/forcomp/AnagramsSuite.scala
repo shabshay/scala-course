@@ -1,10 +1,11 @@
 package forcomp
 
-import org.junit._
 import org.junit.Assert.assertEquals
+import org.junit._
 
 
 class AnagramsSuite {
+
   import Anagrams._
 
   @Test def `wordOccurrences: abcd (3pts)`: Unit =
@@ -16,6 +17,9 @@ class AnagramsSuite {
 
   @Test def `sentenceOccurrences: abcd e (5pts)`: Unit =
     assertEquals(List(('a', 1), ('b', 1), ('c', 1), ('d', 1), ('e', 1)), sentenceOccurrences(List("abcd", "e")))
+
+  @Test def `sentenceOccurrences: i love linuex (5pts)`: Unit =
+    assertEquals(List(('e',1), ('i',2), ('l',2), ('n',1), ('o',1), ('u',1), ('v',1), ('x',1)), sentenceOccurrences(List("I", "love", "Linux")))
 
 
   @Test def `dictionaryByOccurrences.get: eat (10pts)`: Unit =
@@ -36,6 +40,13 @@ class AnagramsSuite {
     assertEquals(lad, subtract(lard, r))
   }
 
+  @Test def `subtract: linuxrulesz - linux (10pts)`: Unit = {
+    val occs = List(('i',1), ('l',1), ('n',1), ('u',1), ('x',1), ('e',1), ('l',1), ('r',1), ('u',1), ('z',1))
+    val subOcc = List(('i',1), ('l',1), ('n',1), ('u',1), ('x',1))
+    val expected = List(('e',1), ('r',1), ('z',1))
+    assertEquals(expected, subtract(occs, subOcc))
+  }
+
 
   @Test def `combinations: [] (8pts)`: Unit =
     assertEquals(List(Nil), combinations(Nil))
@@ -54,14 +65,14 @@ class AnagramsSuite {
       List(('a', 2), ('b', 2))
     )
     val combAbba = combinations(abba).toSet
-    val x = combAbba
     assertEquals(abbacomb.toSet, combAbba)
   }
 
 
   @Test def `sentence anagrams: [] (10pts)`: Unit = {
     val sentence = List()
-    assertEquals(List(Nil), sentenceAnagrams(sentence))
+    val res = sentenceAnagrams(sentence)
+    assertEquals(List(Nil), res)
   }
 
   @Test def `sentence anagrams: Linux rulez (10pts)`: Unit = {
@@ -88,9 +99,64 @@ class AnagramsSuite {
       List("rulez", "Linux"),
       List("Linux", "rulez")
     )
-    assertEquals(anas.toSet, sentenceAnagrams(sentence).toSet)
+    val res = sentenceAnagrams(sentence).toSet
+    assertEquals(anas.toSet, res)
   }
 
+  @Test def `sentence anagrams: yes man`: Unit = {
+    val sentence = List("Yes", "man")
+    val anas = List(
+      List("en", "as", "my"),
+      List("en", "my", "as"),
+      List("man", "yes"),
+      List("men", "say"),
+      List("as", "en", "my"),
+      List("as", "my", "en"),
+      List("sane", "my"),
+      List("Sean", "my"),
+      List("my", "en", "as"),
+      List("my", "as", "en"),
+      List("my", "sane"),
+      List("my", "Sean"),
+      List("say", "men"),
+      List("yes", "man")
+    )
+    val res = sentenceAnagrams(sentence).toSet
+    val dif = anas.diff(res.toList)
+    assertEquals(anas.toSet, res)
+  }
 
-  @Rule def individualTestTimeout = new org.junit.rules.Timeout(10 * 1000)
+  @Test def `sentence anagrams: emacs`: Unit = {
+    val sentence = List("emacs")
+    val anas = List(
+    )
+    val res = sentenceAnagrams(sentence).toSet
+    assertEquals(anas.toSet, res)
+  }
+
+  @Test def `sentence anagrams: ely em`: Unit = {
+    val sentence = List("Ely", "em")
+    val anas = List(
+    )
+    val res = sentenceAnagrams(sentence).toSet
+    assertEquals(anas.toSet, res)
+  }
+
+  @Test def `sentence anagrams: my as en`: Unit = {
+    val sentence = List("my", "as", "en")
+    val anas = List(
+    )
+    val res = sentenceAnagrams(sentence).toSet
+    assertEquals(anas.toSet, res)
+  }
+
+  @Test def `sentence anagrams: as en`: Unit = {
+    val sentence = List("as", "en")
+    val anas = List(
+    )
+    val res = sentenceAnagrams(sentence).toSet
+    assertEquals(anas.toSet, res)
+  }
+
+  //@Rule def individualTestTimeout = new org.junit.rules.Timeout(10 * 1000)
 }
